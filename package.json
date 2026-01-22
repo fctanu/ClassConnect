@@ -1,0 +1,16 @@
+{
+  "name": "mern-todo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "start": "npm --prefix backend run start & npm --prefix frontend run preview"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.1"
+  }
+}

@@ -1,0 +1,7 @@
+node_modules
+dist
+.vite
+frontend/dist
+backend/dist
+**/*.test.ts
+**/tests

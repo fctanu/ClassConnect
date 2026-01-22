@@ -1,0 +1,14 @@
+node_modules/
+dist/
+frontend/node_modules/
+backend/node_modules/
+.env
+.env.local
+.env.*.local
+coverage/
+*.log
+npm-debug.log*
+yarn-debug.log*
+/.idea
+.vscode
+frontend/dist/
