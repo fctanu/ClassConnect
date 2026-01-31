@@ -1,174 +1,197 @@
-# ClassConnect 🎓
+<p align="center">
+  <img src="https://img.shields.io/badge/ClassConnect-Campus_Social_Platform-1a1a2e?style=for-the-badge&labelColor=0B1220" alt="ClassConnect Banner"/>
+</p>
 
-**ClassConnect** is a modern, secure, and premium social platform designed for students and academic communities. It allows users to share updates, engage in discussions, and connect with peers in a safe environment. Built with the **MERN Stack** (MongoDB, Express, React, Node.js) and TypeScript, it features a robust backend with enterprise-grade security and a sleek, responsive frontend.
+<h1 align="center">🎓 ClassConnect</h1>
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat&logo=mongodb&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
-![Security](https://img.shields.io/badge/OWASP-Secured-brightgreen)
+<p align="center">
+  <strong>Your Campus, Connected.</strong><br/>
+  A modern social platform designed for students and academic communities.
+</p>
 
----
+<p align="center">
+  <a href="https://classconnecttest.vercel.app">
+    <img src="https://img.shields.io/badge/🌐_Live_Demo-classconnecttest.vercel.app-84cc16?style=for-the-badge" alt="Live Demo"/>
+  </a>
+</p>
 
-## ✨ Key Features
-
-### 🚀 Core Functionality
-*   **User Authentication**: Secure registration and login with JWT (Access + Refresh tokens) and HttpOnly cookies.
-*   **Social Feed**: Create, view, update, and delete posts with rich text and images.
-*   **Engagement**: Like and comment on posts in real-time.
-*   **Media Uploads**: Secure image uploads with type validation and path traversal protection.
-*   **Responsive Design**: Fully responsive UI built with Tailwind CSS and modern aesthetic principles.
-
-### 🛡️ Enterprise-Grade Security
-ClassConnect implements a "Security First" architecture, protecting against **OWASP Top 10** vulnerabilities:
-
-*   **Authentication Hardening**:
-    *   **Account Lockout**: 5 failed attempts trigger a 2-hour lockout to prevent brute-force attacks.
-    *   **Password Policy**: Enforced complexity (uppercase, lowercase, number, min length).
-    *   **Session Management**: Automatic cleanup of old refresh tokens (max 5 active sessions).
-    *   **No User Enumeration**: Generic error messages prevent email harvesting.
-*   **API Protection**:
-    *   **Rate Limiting**: Granular limits on critical endpoints (Registration, Login, Posting, Comments).
-    *   **DoS Protection**: Request size limits (10kb) and HTTP Parameter Pollution (HPP) defense.
-*   **Injection & XSS Defense**:
-    *   **NoSQL Injection**: Automatic sanitization of MongoDB queries.
-    *   **XSS Protection**: Content Security Policy (CSP) and input sanitization headers.
-*   **Secure Infrastructure**:
-    *   **HTTPS Enforcement**: Strict Transport Security (HSTS) and automatic redirects in production.
-    *   **Safe File Uploads**: Whitelisted MIME types and filename sanitization.
-    *   **Security Logging**: Comprehensive audit logs for suspicious activities (`logs/security.log`).
+<p align="center">
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white" alt="MongoDB"/>
+  <img src="https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white" alt="Express"/>
+  <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React"/>
+  <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js"/>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind"/>
+  <img src="https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white" alt="Vercel"/>
+</p>
 
 ---
 
-## 🛠️ Technology Stack
+## 📖 Overview
 
-### Frontend
-*   **Framework**: React (Vite)
-*   **Language**: TypeScript
-*   **Styling**: Tailwind CSS
-*   **Icons**: Lucide React
-*   **State/Routing**: React Router DOM, Context API
+**ClassConnect** is a full-stack social platform that enables students to share updates, engage in discussions, and connect with peers in a modern, secure environment. Built with the **MERN Stack** and **TypeScript**, it features enterprise-grade security and a premium, responsive user interface.
 
-### Backend
-*   **Runtime**: Node.js
-*   **Framework**: Express.js
-*   **Database**: MongoDB (Mongoose with strict typing)
-*   **Language**: TypeScript
-*   **Validation**: Express Validator, Zod-like constraints
-*   **Security Tools**: Helmet, rate-limit, mongo-sanitize, xss-clean, hpp, winston
+### ✨ Highlights
+
+- 🔐 **Secure Authentication** — JWT with HttpOnly cookies, refresh token rotation
+- 📝 **Rich Content** — Create posts with images and engage through likes & comments
+- 🛡️ **Enterprise Security** — OWASP-compliant protections against common vulnerabilities
+- 📱 **Responsive Design** — Optimized for desktop, tablet, and mobile
+- ⚡ **Real-time Status** — Live system health monitoring
+- ☁️ **Cloud Deployed** — Hosted on Vercel with serverless functions
 
 ---
 
-## 🚀 Getting Started
+## 🖼️ Screenshots
+
+<p align="center">
+  <img src="https://via.placeholder.com/800x450/0B1220/84cc16?text=ClassConnect+Dashboard" alt="Dashboard Preview" width="80%"/>
+</p>
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
-*   Node.js (v18+)
-*   MongoDB Instance (Local or Atlas)
-*   npm or yarn
+
+- **Node.js** v18 or higher
+- **MongoDB** instance (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
+- **npm** or **yarn**
 
 ### Installation
 
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/yourusername/class-connect.git
-    cd class-connect
-    ```
-
-2.  **Install Dependencies** (Root, Backend, and Frontend)
-    ```bash
-    # Root
-    npm install
-
-    # Backend
-    cd backend
-    npm install
-    
-    # Frontend
-    cd ../frontend
-    npm install
-    ```
-
-3.  **Environment Configuration**
-    Create a `.env` file in the `backend/` directory:
-    ```env
-    PORT=4000
-    MONGO_URI=mongodb+srv://<your_connection_string>
-    JWT_ACCESS_SECRET=<generated_128_char_secret>
-    JWT_REFRESH_SECRET=<generated_128_char_secret>
-    ACCESS_EXPIRES=15m
-    REFRESH_EXPIRES=30d
-    CLIENT_URL=http://localhost:5173
-    NODE_ENV=development
-    ```
-
-### Running the Application
-
-**Development Mode** (Run both servers concurrently):
 ```bash
-# From the root directory
+# Clone the repository
+git clone https://github.com/fctanu/ClassConnect.git
+cd ClassConnect
+
+# Install all dependencies (uses npm workspaces)
+npm install
+```
+
+### Environment Setup
+
+Create a `.env` file in the `backend/` directory:
+
+```env
+PORT=4000
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/classconnect
+JWT_ACCESS_SECRET=<your-128-character-secret>
+JWT_REFRESH_SECRET=<your-128-character-secret>
+ACCESS_EXPIRES=15m
+REFRESH_EXPIRES=30d
+CLIENT_URL=http://localhost:5173
+NODE_ENV=development
+```
+
+### Run Development Server
+
+```bash
+# Start both frontend and backend concurrently
 npm run dev
 ```
-*   Frontend: `http://localhost:5173`
-*   Backend: `http://localhost:4000`
 
-**Data Seeding** (Optional):
-Populate the database with dummy users and posts for testing:
-```bash
-cd backend
-npx ts-node src/scripts/seed.ts
+| Service  | URL                     |
+|----------|-------------------------|
+| Frontend | http://localhost:5173   |
+| Backend  | http://localhost:4000   |
+
+---
+
+## 🏗️ Architecture
+
 ```
-*   **Admin User**: `admin@classconnect.com` / `AdminPass123!`
+ClassConnect/
+├── api/                    # Vercel Serverless entry point
+├── backend/                # Express.js API
+│   ├── src/
+│   │   ├── config/         # Database & cookie configuration
+│   │   ├── middleware/     # Auth, rate limiting, security
+│   │   ├── models/         # Mongoose schemas
+│   │   ├── routes/         # API endpoints
+│   │   └── utils/          # Helper functions
+│   └── package.json
+├── frontend/               # React + Vite application
+│   ├── src/
+│   │   ├── components/     # Reusable UI components
+│   │   ├── context/        # Auth context provider
+│   │   ├── pages/          # Route pages
+│   │   └── services/       # API integration
+│   └── package.json
+├── vercel.json             # Deployment configuration
+└── package.json            # Workspace root
+```
+
+---
+
+## 🛡️ Security Features
+
+ClassConnect implements comprehensive security measures:
+
+| Category | Protection |
+|----------|------------|
+| **Authentication** | Account lockout, password complexity, session limits |
+| **Authorization** | JWT with short-lived access tokens, secure refresh rotation |
+| **Input Validation** | NoSQL injection prevention, XSS sanitization |
+| **Rate Limiting** | Endpoint-specific limits (login, registration, posts) |
+| **Infrastructure** | Helmet headers, CORS, HPP protection |
 
 ---
 
 ## 🧪 Testing
 
-The project includes an automated security test suite to verify protections:
-
 ```bash
+# Run backend tests
 cd backend
+npm test
+
+# Run security test suite
 npx ts-node src/scripts/test-security.ts
 ```
-This runs checks for:
-*   User Enumeration
-*   NoSQL Injection
-*   Authentication Flows
-*   Rate Limiting Effectiveness
-*   XSS Sanitization
 
 ---
 
-## 📂 Project Structure
+## 🌐 Deployment
 
-```
-class-connect/
-├── backend/                # Express API
-│   ├── src/
-│   │   ├── config/         # DB & Cookie config
-│   │   ├── middleware/     # Auth, RateLimit, Security, Logger
-│   │   ├── models/         # Mongoose Schemas (User, Post, Comment)
-│   │   ├── routes/         # API Routes
-│   │   ├── scripts/        # Seeding & Testing scripts
-│   │   └── utils/          # Helpers (Hash, Cleanup)
-│   └── logs/               # Security audit logs
-│
-├── frontend/               # React App
-│   ├── public/             # Static assets & .well-known
-│   └── src/
-│       ├── components/     # Reusable UI components
-│       ├── context/        # Auth Context
-│       ├── pages/          # Dashboard, Login, Register
-│       └── services/       # API integration (Axios)
-```
+ClassConnect is deployed on **Vercel** with:
+
+- ⚡ **Serverless Functions** for the Express backend
+- 🌍 **Edge Network** for fast global delivery
+- 🔄 **Automatic Deployments** on push to `master`
+
+### Environment Variables (Vercel)
+
+Configure these in your Vercel project settings:
+
+| Variable | Description |
+|----------|-------------|
+| `MONGO_URI` | MongoDB connection string |
+| `JWT_ACCESS_SECRET` | Access token secret |
+| `JWT_REFRESH_SECRET` | Refresh token secret |
+| `NODE_ENV` | `production` |
+| `CLIENT_URL` | Your Vercel domain |
+| `CRON_SECRET` | Secret for scheduled jobs |
 
 ---
 
-## 🔒 Security Policy
-If you discover a security vulnerability, please report it to `security@classconnect.com` or refer to `frontend/public/.well-known/security.txt`. We are committed to addressing valid reports within 48 hours.
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
 ## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">
+  <sub>Built with ❤️ for the academic community</sub>
+</p>
