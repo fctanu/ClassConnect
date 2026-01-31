@@ -86,15 +86,15 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="animate-in space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="animate-in space-y-6 max-w-2xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <Skeleton className="h-7 w-48 mb-2" />
-            <Skeleton className="h-4 w-64" />
+            <Skeleton className="h-8 w-48 mb-2 rounded-lg" />
+            <Skeleton className="h-4 w-64 rounded-lg" />
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-8">
           <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />
@@ -104,39 +104,47 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="animate-in space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Community Feed</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Share updates, photos, and short stories with everyone.
-          </p>
+    <div className="animate-in pb-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto space-y-8 mb-12">
+        <div className="flex flex-col gap-1 text-center sm:text-left sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-heading font-bold text-foreground mb-2">Community Feed</h1>
+            <p className="text-muted-foreground text-lg">
+              Share updates, photos, and liquid ideas.
+            </p>
+          </div>
+          <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 px-3 py-1.5 rounded-full border border-border/50">
+            <PenSquare className="w-4 h-4" />
+            {authenticated ? 'Ready to post' : 'Read-only mode'}
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <PenSquare className="w-4 h-4" />
-          {authenticated ? 'You can post to the feed' : 'Log in to publish your own posts'}
-        </div>
+
+        {error && (
+          <Card className="border-destructive/50 bg-destructive/10">
+            <CardContent className="py-4">
+              <div className="flex items-center gap-3 text-destructive font-medium">
+                <p>{error}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {authenticated ? (
+          <PostForm onCreate={handleCreate} />
+        ) : (
+          <Card className="border-2 border-primary/20 bg-primary/5 shadow-sm">
+            <CardContent className="py-12 text-center space-y-4">
+              <div className="mx-auto w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
+                <PenSquare className="w-6 h-6 text-primary" />
+              </div>
+              <h2 className="font-heading font-bold text-foreground text-2xl tracking-tight">Your Campus, Connected. 🚀</h2>
+              <p className="text-muted-foreground text-lg max-w-lg mx-auto leading-relaxed">
+                Dive into the ultimate collaborative space for students. Share insights, study together, and unlock your potential with ClassConnect.
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
-
-      {error && (
-        <Card className="border-red-200 bg-red-50 dark:bg-red-950 dark:border-red-800">
-          <CardContent className="py-4">
-            <div className="flex items-center gap-3 text-red-700 dark:text-red-300">
-              <p>{error}</p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {authenticated ? (
-        <PostForm onCreate={handleCreate} />
-      ) : (
-        <Card className="border-gray-200 dark:border-gray-700">
-          <CardContent className="py-4 text-sm text-gray-600 dark:text-gray-400">
-            Sign in to share your own posts and like others.
-          </CardContent>
-        </Card>
-      )}
 
       <PostList posts={posts} onLike={handleLike} />
     </div>

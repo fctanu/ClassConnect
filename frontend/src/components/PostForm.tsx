@@ -19,6 +19,7 @@ export default function PostForm({ onCreate }: PostFormProps) {
   const [urlError, setUrlError] = useState('');
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   function parseUrls(raw: string) {
     return raw
@@ -101,108 +102,110 @@ export default function PostForm({ onCreate }: PostFormProps) {
           ...(urls.length > 0 ? { images: urls } : {}),
         });
       }
+      // Reset form
       setTitle('');
       setDescription('');
       setImageUrls('');
       setFiles([]);
+      setIsFocused(false);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form onSubmit={submit} className="card p-4 space-y-4">
-      <Input
-        label="Post title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Share something with the community..."
-        required
-      />
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-          Description
-        </label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={3}
-          placeholder="Write a short description..."
-          className="input resize-none"
+    <form
+      onSubmit={submit}
+      className={`relative rounded-2xl border transition-all duration-300 p-6 space-y-5 bg-card ${isFocused ? 'ring-2 ring-primary/20 border-primary/50 shadow-lg' : 'border-border shadow-sm'
+        }`}
+      onFocus={() => setIsFocused(true)}
+    >
+      <div className="space-y-4">
+        <Input
+          label="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="What's on your mind?"
+          required
+          className="text-lg font-medium border-0 px-0 rounded-none border-b border-border/50 focus:border-primary focus:ring-0 bg-transparent transition-colors"
         />
-      </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-          Image URLs
-        </label>
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <ImagePlus className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              value={imageUrls}
-              onChange={(e) => setImageUrls(e.target.value)}
-              placeholder="https://... , https://... (comma separated, up to 6)"
-              className="input pl-9"
-            />
-          </div>
-        </div>
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          Paste image URLs separated by commas.
-        </p>
-        {urlError && (
-          <p className="mt-1 text-xs text-red-600">{urlError}</p>
-        )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-          Upload images (max 3MB each)
-        </label>
-        <div className="flex items-center gap-3">
-          <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-            <UploadCloud className="w-4 h-4" />
-            <span>Select images</span>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFilesChange}
-              className="hidden"
-            />
+        <div>
+          <label className="block text-sm font-medium text-foreground mb-1.5 sr-only">
+            Description
           </label>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {files.length > 0 ? `${files.length} file(s) selected` : 'No files selected'}
-          </span>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+            placeholder="Tell us more about it..."
+            className="w-full bg-transparent border-0 resize-none focus:ring-0 p-0 text-muted-foreground placeholder:text-muted-foreground/50 leading-relaxed"
+          />
         </div>
-        {fileError && (
-          <p className="mt-1 text-xs text-red-600">{fileError}</p>
-        )}
-        {filePreviews.length > 0 && (
-          <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {filePreviews.map((previewUrl, index) => (
-              <div
-                key={`${previewUrl}-${index}`}
-                className="relative overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800"
-              >
-                <img
-                  src={previewUrl}
-                  alt={`Selected upload ${index + 1}`}
-                  className="w-full h-24 object-cover"
+      </div>
+
+      {(isFocused || title || description || files.length > 0) && (
+        <div className="animate-in pt-4 border-t border-border/50 space-y-4">
+          {/* Image Input Section */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Image URLs</label>
+              <div className="relative">
+                <ImagePlus className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  value={imageUrls}
+                  onChange={(e) => setImageUrls(e.target.value)}
+                  placeholder="https://..."
+                  className="flex h-10 w-full rounded-xl border border-input bg-transparent px-3 py-2 pl-9 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+              {urlError && <p className="text-xs text-destructive">{urlError}</p>}
+            </div>
 
-      <div className="flex justify-end pt-2">
-        <Button type="submit" loading={loading} disabled={!title.trim()}>
-          Publish
-          <Send className="w-4 h-4" />
-        </Button>
-      </div>
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Upload</label>
+              <div className="flex items-center gap-3">
+                <label className="flex-1 inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl border border-dashed border-border hover:border-primary hover:bg-primary/5 cursor-pointer transition-colors text-sm text-muted-foreground hover:text-primary">
+                  <UploadCloud className="w-4 h-4" />
+                  <span>Choose Files</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFilesChange}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              {fileError && <p className="text-xs text-destructive">{fileError}</p>}
+            </div>
+          </div>
+
+          {/* Previews */}
+          {files.length > 0 && (
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {filePreviews.map((url, i) => (
+                <div key={i} className="relative flex-none w-20 h-20 rounded-lg overflow-hidden border border-border">
+                  <img src={url} className="w-full h-full object-cover" alt="Preview" />
+                </div>
+              ))}
+              <div className="flex-none flex items-center justify-center w-20 h-20 rounded-lg border border-dashed border-border text-xs text-muted-foreground">
+                {files.length} selected
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-between items-center pt-2">
+            <span className="text-xs text-muted-foreground">
+              {files.length > 0 || imageUrls ? 'Images added' : 'Add text or liquid ideas'}
+            </span>
+            <Button type="submit" loading={loading} disabled={!title.trim()} className="rounded-full px-6">
+              Publish
+              <Send className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+        </div>
+      )}
     </form>
   );
 }

@@ -73,4 +73,9 @@ export const updatePost = (id: string, data: { title?: string; description?: str
 export const deletePost = (id: string) => api.delete(`/api/posts/${id}`);
 export const toggleLike = (id: string) => api.post(`/api/posts/${id}/like`);
 
+// Comments
+export const getComments = (postId: string) => api.get(`/api/posts/${postId}/comments`);
+export const createComment = (postId: string, content: string) =>
+  api.post(`/api/posts/${postId}/comments`, { content });
+
 export default api;

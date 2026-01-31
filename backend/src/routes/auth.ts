@@ -1,9 +1,11 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import validator from 'validator';
 import User from '../models/User';
 import { hashToken, compareToken } from '../utils/hash';
 import { refreshCookieOptions } from '../config/cookie';
+import { logSecurityEvent } from '../middleware/securityLogger';
 
 const router = Router();
 
@@ -28,11 +30,44 @@ function signRefresh(user: { _id: unknown }) {
 
 router.post('/register', async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
+
+  // Validate inputs
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ message: 'Invalid email format' });
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({ message: 'Password must be at least 8 characters' });
+  }
+
+  if (!validator.isStrongPassword(password, {
+    minLength: 8,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 0
+  })) {
+    return res.status(400).json({
+      message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+    });
+  }
+
   const normalizedEmail = typeof email === 'string' ? email.toLowerCase().trim() : '';
   const existing = await User.findOne({ email: normalizedEmail });
-  if (existing) return res.status(400).json({ message: 'User exists' });
+
+  // Generic message to prevent user enumeration
+  if (existing) {
+    logSecurityEvent('REGISTER_FAIL_EXISTING', { email: normalizedEmail }, req);
+    return res.status(400).json({ message: 'Registration failed. Please check your information.' });
+  }
+
   const hashed = await bcrypt.hash(password, 10);
   const user = await User.create({ name, email: normalizedEmail, password: hashed });
+  logSecurityEvent('REGISTER_SUCCESS', { userId: user._id, email: normalizedEmail }, req);
   return res.json({ userId: user._id });
 });
 
@@ -40,14 +75,62 @@ router.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const normalizedEmail = typeof email === 'string' ? email.toLowerCase().trim() : '';
   const user = await User.findOne({ email: normalizedEmail });
-  if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+
+  if (!user) {
+    logSecurityEvent('LOGIN_FAIL_NO_USER', { email: normalizedEmail }, req);
+    return res.status(401).json({ message: 'Invalid email or password' });
+  }
+
+  // Check if account is locked
+  if (user.isLocked()) {
+    logSecurityEvent('LOGIN_BLOCKED_LOCKED', { email: normalizedEmail, attempts: user.loginAttempts }, req);
+    return res.status(423).json({
+      message: 'Account is temporarily locked due to too many failed login attempts. Please try again later.'
+    });
+  }
+
   const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
+
+  if (!ok) {
+    await user.incrementLoginAttempts();
+    logSecurityEvent('LOGIN_FAIL_PASSWORD', { email: normalizedEmail }, req);
+
+    // Refresh user to get updated attempts count
+    await user.save();
+    const updatedUser = await User.findById(user._id);
+
+    // Check if just locked
+    const remainingAttempts = 5 - (updatedUser?.loginAttempts || 0);
+    if (remainingAttempts > 0) {
+      return res.status(401).json({
+        message: `Invalid email or password. ${remainingAttempts} attempt(s) remaining.`
+      });
+    } else {
+      logSecurityEvent('ACCOUNT_LOCKED', { email: normalizedEmail }, req);
+      return res.status(423).json({
+        message: 'Account locked due to too many failed attempts. Try again in 2 hours.'
+      });
+    }
+  }
+
+  // Successful login - reset attempts
+  if (user.loginAttempts > 0) {
+    await user.resetLoginAttempts();
+  }
+
+  logSecurityEvent('LOGIN_SUCCESS', { userId: user._id }, req);
   const accessToken = signAccess(user);
   const refreshToken = signRefresh(user);
   const hashed = await hashToken(refreshToken);
   user.refreshTokens = user.refreshTokens || [];
   user.refreshTokens.push(hashed);
+
+  // Limit to last 5 tokens (5 concurrent sessions)
+  const maxTokensPerUser = 5;
+  if (user.refreshTokens.length > maxTokensPerUser) {
+    user.refreshTokens = user.refreshTokens.slice(-maxTokensPerUser);
+  }
+
   await user.save();
   res.cookie('jid', refreshToken, refreshCookieOptions());
   return res.json({ accessToken });
@@ -107,7 +190,7 @@ router.post('/logout', async (req: Request, res: Response) => {
   } catch (err) {
     // ignore
   }
-  res.clearCookie('jid', { path: '/api/auth/refresh' });
+  res.clearCookie('jid', refreshCookieOptions());
   return res.json({ success: true });
 });
 

@@ -1,0 +1,9 @@
+Contact: mailto:security@classconnect.com
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://classconnect.com/.well-known/security.txt
+Policy: https://classconnect.com/security
+Acknowledgments: https://classconnect.com/hall-of-fame
+
+# If you find a security vulnerability, please report it to us.
+# We will respond within 48 hours.

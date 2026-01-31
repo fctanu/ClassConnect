@@ -8,6 +8,8 @@ import multer from 'multer';
 import Post from '../models/Post';
 import PostLike from '../models/PostLike';
 import User from '../models/User';
+import Comment from '../models/Comment';
+import { postCreationLimiter, commentLimiter, likeLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 const uploadRoot = path.resolve(process.cwd(), 'uploads');
@@ -18,7 +20,14 @@ if (!fs.existsSync(uploadRoot)) {
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, uploadRoot),
   filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname);
+    // Block path traversal attempts
+    if (file.originalname.includes('..') ||
+      file.originalname.includes('/') ||
+      file.originalname.includes('\\')) {
+      return cb(new Error('Invalid filename - path traversal detected'), '');
+    }
+
+    const ext = path.extname(file.originalname).toLowerCase();
     const base = path
       .basename(file.originalname, ext)
       .replace(/[^a-z0-9-_]+/gi, '-')
@@ -32,8 +41,13 @@ const upload = multer({
   storage,
   limits: { fileSize: 3 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (!file.mimetype.startsWith('image/')) {
-      return cb(new Error('Only image files are allowed'));
+    // Strict whitelist of allowed file types
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    const ext = path.extname(file.originalname).toLowerCase();
+
+    if (!allowedMimes.includes(file.mimetype) || !allowedExts.includes(ext)) {
+      return cb(new Error('Only image files (JPG, PNG, GIF, WebP) are allowed'));
     }
     cb(null, true);
   },
@@ -101,6 +115,7 @@ router.get(
 
 router.post(
   '/',
+  postCreationLimiter,
   upload.array('images', 6),
   body('title').trim().isLength({ min: 1, max: 120 }).withMessage('title is required'),
   body('description').optional().trim().isLength({ max: 2000 }).withMessage('description too long'),
@@ -121,16 +136,16 @@ router.post(
     const { title, description, images, imageUrls } = req.body;
     const urlImages = Array.isArray(images)
       ? images
-          .filter((item) => typeof item === 'string')
-          .map((item) => item.trim())
-          .filter((item) => item.length > 0)
+        .filter((item) => typeof item === 'string')
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0)
       : [];
     const extraUrls =
       typeof imageUrls === 'string'
         ? imageUrls
-            .split(',')
-            .map((item) => item.trim())
-            .filter((item) => item.length > 0)
+          .split(',')
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0)
         : [];
     const uploadedFiles = Array.isArray(req.files)
       ? req.files.map((file) => `/uploads/${file.filename}`)
@@ -166,17 +181,17 @@ router.put(
     if (req.body.images !== undefined) {
       update.images = Array.isArray(req.body.images)
         ? req.body.images
-            .filter((item: unknown) => typeof item === 'string')
-            .map((item: string) => item.trim())
-            .filter((item: string) => item.length > 0)
-            .slice(0, 6)
+          .filter((item: unknown) => typeof item === 'string')
+          .map((item: string) => item.trim())
+          .filter((item: string) => item.length > 0)
+          .slice(0, 6)
         : [];
     }
 
     const post = await Post.findOneAndUpdate(
       { _id: req.params.id, owner: userId },
       update,
-      { new: true },
+      { new: true, includeResultMetadata: false },
     );
     if (!post) return res.status(404).json({ message: 'Post not found' });
     let likedByMe = false;
@@ -193,7 +208,7 @@ router.delete(
   async (req: Request, res: Response) => {
     const userId = getUserIdFromHeader(req);
     if (!userId) return res.status(401).json({ message: 'Unauthorized' });
-    const post = await Post.findOneAndDelete({ _id: req.params.id, owner: userId });
+    const post = await Post.findOneAndDelete({ _id: req.params.id, owner: userId }, { includeResultMetadata: false });
     if (!post) return res.status(404).json({ message: 'Post not found' });
     await PostLike.deleteMany({ post: post._id });
     res.json({ success: true });
@@ -202,6 +217,7 @@ router.delete(
 
 router.post(
   '/:id/like',
+  likeLimiter,
   param('id').isMongoId().withMessage('Invalid post ID'),
   validate,
   async (req: Request, res: Response) => {
@@ -229,6 +245,51 @@ router.post(
     }
     const refreshed = await Post.findById(post._id);
     return res.json({ likeCount: refreshed?.likeCount || 0, likedByMe: true });
+  },
+);
+
+// Get comments for a post
+router.get(
+  '/:id/comments',
+  param('id').isMongoId().withMessage('Invalid post ID'),
+  validate,
+  async (req: Request, res: Response) => {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    const comments = await Comment.find({ post: post._id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json(comments);
+  },
+);
+
+// Create a comment on a post
+router.post(
+  '/:id/comments',
+  commentLimiter,
+  param('id').isMongoId().withMessage('Invalid post ID'),
+  body('content').trim().isLength({ min: 1, max: 500 }).withMessage('Comment content is required (max 500 characters)'),
+  validate,
+  async (req: Request, res: Response) => {
+    const userId = getUserIdFromHeader(req);
+    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(401).json({ message: 'Unauthorized' });
+
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    const comment = await Comment.create({
+      content: req.body.content,
+      post: post._id,
+      author: user._id,
+      authorName: user.name,
+    });
+
+    res.status(201).json(comment);
   },
 );
 

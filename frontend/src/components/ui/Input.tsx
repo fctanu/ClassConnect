@@ -11,24 +11,24 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label className="block text-sm font-medium text-foreground mb-1.5 font-heading">
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               {icon}
             </div>
           )}
           <input
             ref={ref}
-            className={`${icon ? 'pl-10' : ''} ${error ? 'input-error' : 'input'} ${className}`}
+            className={`${icon ? 'pl-10' : ''} ${error ? 'border-destructive focus:ring-destructive' : 'input'} ${className}`}
             {...props}
           />
         </div>
         {error && (
-          <p className="mt-1.5 text-sm text-red-600">{error}</p>
+          <p className="mt-1.5 text-sm text-destructive font-medium">{error}</p>
         )}
       </div>
     );

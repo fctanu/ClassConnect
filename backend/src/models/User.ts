@@ -5,6 +5,11 @@ export interface IUser extends Document {
   email: string;
   password: string;
   refreshTokens?: string[];
+  loginAttempts: number;
+  lockUntil?: Date;
+  isLocked(): boolean;
+  incrementLoginAttempts(): Promise<any>;
+  resetLoginAttempts(): Promise<any>;
 }
 
 const userSchema = new Schema<IUser>(
@@ -21,8 +26,45 @@ const userSchema = new Schema<IUser>(
     },
     password: { type: String, required: true },
     refreshTokens: [{ type: String }],
+    loginAttempts: { type: Number, default: 0 },
+    lockUntil: { type: Date },
   },
   { timestamps: true },
 );
+
+// Check if account is locked
+userSchema.methods.isLocked = function () {
+  return !!(this.lockUntil && this.lockUntil > new Date());
+};
+
+// Increment login attempts and lock if needed
+userSchema.methods.incrementLoginAttempts = function () {
+  // If lock has expired, reset attempts
+  if (this.lockUntil && this.lockUntil < new Date()) {
+    return this.updateOne({
+      $set: { loginAttempts: 1 },
+      $unset: { lockUntil: 1 }
+    });
+  }
+
+  const updates: any = { $inc: { loginAttempts: 1 } };
+  const maxAttempts = 5;
+  const lockTime = 2 * 60 * 60 * 1000; // 2 hours
+
+  // Lock account after max attempts
+  if (this.loginAttempts + 1 >= maxAttempts && !this.isLocked()) {
+    updates.$set = { lockUntil: new Date(Date.now() + lockTime) };
+  }
+
+  return this.updateOne(updates);
+};
+
+// Reset login attempts
+userSchema.methods.resetLoginAttempts = function () {
+  return this.updateOne({
+    $set: { loginAttempts: 0 },
+    $unset: { lockUntil: 1 }
+  });
+};
 
 export default model<IUser>("User", userSchema);

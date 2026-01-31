@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthProvider';
 import api from '../services/api';
 import axios from 'axios';
 import { Button, Input, Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui';
-import { User, Mail, Lock, ArrowRight, CheckSquare } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight, PenSquare } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Register() {
@@ -41,30 +41,35 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center py-12 px-4">
+    <div className="flex flex-col items-center justify-center py-12 sm:px-6 lg:px-8 animate-in bg-background">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md mb-8">
+        <Link to="/" className="flex items-center justify-center gap-2 group">
+          <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-colors">
+            <PenSquare className="w-6 h-6 text-primary" />
+          </div>
+          <span className="font-heading font-bold text-2xl tracking-tight text-foreground">
+            ClassConnect
+          </span>
+        </Link>
+        <h2 className="mt-6 text-center text-3xl font-heading font-bold tracking-tight text-foreground">
+          Create an account
+        </h2>
+        <p className="mt-2 text-center text-sm text-muted-foreground">
+          Join the community and start publishing today
+        </p>
+      </div>
+
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors">
-            <CheckSquare className="w-10 h-10" />
-            <span className="font-bold text-2xl">MERN BLOG</span>
-          </Link>
-        </div>
-
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="text-xl">Create an account</CardTitle>
-            <CardDescription>Start sharing your posts today</CardDescription>
-          </CardHeader>
-
-          <CardContent>
-            <form onSubmit={submit} className="space-y-4">
+        <Card className="border-border/60 shadow-lg">
+          <CardContent className="pt-6">
+            <form onSubmit={submit} className="space-y-5">
               <Input
                 label="Full Name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe"
-                icon={<User className="w-5 h-5" />}
+                icon={<User className="w-4 h-4" />}
                 required
                 autoComplete="name"
               />
@@ -75,7 +80,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                icon={<Mail className="w-5 h-5" />}
+                icon={<Mail className="w-4 h-4" />}
                 required
                 autoComplete="email"
               />
@@ -86,26 +91,27 @@ export default function Register() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Create a password"
-                icon={<Lock className="w-5 h-5" />}
+                icon={<Lock className="w-4 h-4" />}
                 required
                 autoComplete="new-password"
               />
 
               <Button
                 type="submit"
-                className="w-full mt-2"
+                className="w-full mt-2 gap-2"
                 loading={loading}
+                size="lg"
               >
                 Create Account
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-sm text-gray-600">
+            <div className="mt-6 text-center text-sm text-muted-foreground">
               Already have an account?{' '}
               <Link
                 to="/login"
-                className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
+                className="font-medium text-primary hover:text-primary/80 transition-colors underline-offset-4 hover:underline"
               >
                 Sign in
               </Link>
