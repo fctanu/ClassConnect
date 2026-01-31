@@ -11,10 +11,23 @@ import { securityLogger } from './middleware/securityLogger';
 import authRoutes from './routes/auth';
 import { authLimiter, generalApiLimiter } from './middleware/rateLimiter';
 import postsRoutes from './routes/posts';
+import cronRoutes from './routes/cron';
 import 'express-async-errors';
 import errorHandler from './middleware/errorHandler';
 
+import connectDB from './config/db';
+
 const app = express();
+
+// Ensure DB is connected on every request (for Serverless)
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        next(err);
+    }
+});
 
 // HTTPS redirect in production
 if (process.env.NODE_ENV === 'production') {
@@ -69,6 +82,7 @@ app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/posts', generalApiLimiter, postsRoutes);
+app.use('/api/cron', cronRoutes);
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
