@@ -28,7 +28,7 @@ export default function Login() {
       const res = await api.post('/api/auth/login', { email, password });
       const { accessToken } = res.data;
       login(accessToken);
-      toast.success('Welcome back! 🎉');
+      toast.success('Welcome back!');
       navigate('/');
     } catch (err: unknown) {
       let message = 'Login failed. Please try again.';
@@ -44,17 +44,16 @@ export default function Login() {
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center py-12 px-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 transition-colors">
+          <Link to="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors">
             <CheckSquare className="w-10 h-10" />
-            <span className="font-bold text-2xl">MERN TODO</span>
+            <span className="font-bold text-2xl">MERN BLOG</span>
           </Link>
         </div>
 
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome back</CardTitle>
+            <CardTitle className="text-xl">Welcome back</CardTitle>
             <CardDescription>Sign in to your account to continue</CardDescription>
           </CardHeader>
 
@@ -84,7 +83,7 @@ export default function Login() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full mt-2"
                 loading={loading}
               >
                 Sign In
@@ -92,11 +91,11 @@ export default function Login() {
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-sm text-surface-600">
+            <div className="mt-6 text-center text-sm text-gray-600">
               Don't have an account?{' '}
               <Link
                 to="/register"
-                className="font-medium text-primary-600 hover:text-primary-700 transition-colors"
+                className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
               >
                 Create one
               </Link>

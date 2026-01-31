@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import api from '../services/api';
 import { toast } from 'sonner';
 
+const SESSION_FLAG_KEY = 'hasSession';
+
 type AuthContextType = {
   ready: boolean;
   authenticated: boolean;
@@ -17,12 +19,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     async function tryRefresh() {
+      const hasSession = localStorage.getItem(SESSION_FLAG_KEY);
+      const accessToken = localStorage.getItem('accessToken');
+      if (!hasSession && !accessToken) {
+        setAuthenticated(false);
+        setReady(true);
+        return;
+      }
       try {
         const res = await api.post('/api/auth/refresh', {}, { withCredentials: true });
         localStorage.setItem('accessToken', res.data.accessToken);
+        localStorage.setItem(SESSION_FLAG_KEY, 'true');
         setAuthenticated(true);
       } catch (err) {
         localStorage.removeItem('accessToken');
+        localStorage.removeItem(SESSION_FLAG_KEY);
         setAuthenticated(false);
       } finally {
         setReady(true);
@@ -33,6 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   function login(accessToken: string) {
     localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem(SESSION_FLAG_KEY, 'true');
     setAuthenticated(true);
   }
 
@@ -43,6 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Ignore logout errors as we are clearing local state anyway
     }
     localStorage.removeItem('accessToken');
+    localStorage.removeItem(SESSION_FLAG_KEY);
     setAuthenticated(false);
     toast.info('You have been logged out');
   }

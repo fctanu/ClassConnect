@@ -27,7 +27,7 @@ export default function Register() {
 
     try {
       await api.post('/api/auth/register', { name, email, password });
-      toast.success('Account created successfully! 🎉');
+      toast.success('Account created successfully!');
       navigate('/login');
     } catch (err: unknown) {
       let message = 'Registration failed. Please try again.';
@@ -43,18 +43,17 @@ export default function Register() {
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center py-12 px-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 transition-colors">
+          <Link to="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors">
             <CheckSquare className="w-10 h-10" />
-            <span className="font-bold text-2xl">MERN TODO</span>
+            <span className="font-bold text-2xl">MERN BLOG</span>
           </Link>
         </div>
 
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Create an account</CardTitle>
-            <CardDescription>Start managing your tasks today</CardDescription>
+            <CardTitle className="text-xl">Create an account</CardTitle>
+            <CardDescription>Start sharing your posts today</CardDescription>
           </CardHeader>
 
           <CardContent>
@@ -94,7 +93,7 @@ export default function Register() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full mt-2"
                 loading={loading}
               >
                 Create Account
@@ -102,11 +101,11 @@ export default function Register() {
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-sm text-surface-600">
+            <div className="mt-6 text-center text-sm text-gray-600">
               Already have an account?{' '}
               <Link
                 to="/login"
-                className="font-medium text-primary-600 hover:text-primary-700 transition-colors"
+                className="font-medium text-blue-600 hover:text-blue-700 transition-colors"
               >
                 Sign in
               </Link>

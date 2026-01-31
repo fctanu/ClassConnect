@@ -5,6 +5,8 @@ const api = axios.create({
   withCredentials: true,
 });
 
+const SESSION_FLAG_KEY = 'hasSession';
+
 // attach access token from localStorage
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
@@ -41,6 +43,7 @@ api.interceptors.response.use(
         );
         const newToken = res.data.accessToken;
         localStorage.setItem('accessToken', newToken);
+        localStorage.setItem(SESSION_FLAG_KEY, 'true');
         if (originalRequest.headers) {
           originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
         }
@@ -48,6 +51,7 @@ api.interceptors.response.use(
       } catch (err) {
         // failed to refresh
         localStorage.removeItem('accessToken');
+        localStorage.removeItem(SESSION_FLAG_KEY);
         return Promise.reject(err);
       }
     }
@@ -55,20 +59,18 @@ api.interceptors.response.use(
   },
 );
 
-// Projects
-export const getProjects = () => api.get('/api/projects');
-export const createProject = (data: { name: string; description?: string; color?: string }) =>
-  api.post('/api/projects', data);
-export const updateProject = (id: string, data: { name?: string; description?: string; color?: string }) =>
-  api.put(`/api/projects/${id}`, data);
-export const deleteProject = (id: string) => api.delete(`/api/projects/${id}`);
-
-// Enhanced Task endpoints
-export const searchTasks = (query: string) =>
-  api.get(`/api/tasks?search=${encodeURIComponent(query)}`);
-export const filterTasksByCategory = (category: string) =>
-  api.get(`/api/tasks?category=${encodeURIComponent(category)}`);
-export const filterTasksByPriority = (priority: string) =>
-  api.get(`/api/tasks?priority=${priority}`);
+// Posts
+export const getPosts = () => api.get('/api/posts');
+export const getPost = (id: string) => api.get(`/api/posts/${id}`);
+export const createPost = (
+  data: FormData | { title: string; description?: string; images?: string[] }
+) =>
+  api.post('/api/posts', data, data instanceof FormData
+    ? { headers: { 'Content-Type': 'multipart/form-data' } }
+    : undefined);
+export const updatePost = (id: string, data: { title?: string; description?: string; images?: string[] }) =>
+  api.put(`/api/posts/${id}`, data);
+export const deletePost = (id: string) => api.delete(`/api/posts/${id}`);
+export const toggleLike = (id: string) => api.post(`/api/posts/${id}/like`);
 
 export default api;

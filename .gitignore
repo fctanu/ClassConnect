@@ -12,3 +12,4 @@ yarn-debug.log*
 /.idea
 .vscode
 frontend/dist/
+uploads/

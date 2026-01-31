@@ -5,7 +5,3 @@ export type { InputProps } from './Input';
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card';
 export { ToastProvider } from './Toast';
 export { ThemeToggle } from './ThemeToggle';
-export { PrioritySelector } from './PrioritySelector';
-export type { Priority } from './PrioritySelector';
-export { DatePicker } from './DatePicker';
-export { Sidebar } from '../Sidebar';

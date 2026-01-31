@@ -28,16 +28,18 @@ function signRefresh(user: { _id: unknown }) {
 
 router.post('/register', async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
-  const existing = await User.findOne({ email });
+  const normalizedEmail = typeof email === 'string' ? email.toLowerCase().trim() : '';
+  const existing = await User.findOne({ email: normalizedEmail });
   if (existing) return res.status(400).json({ message: 'User exists' });
   const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({ name, email, password: hashed });
+  const user = await User.create({ name, email: normalizedEmail, password: hashed });
   return res.json({ userId: user._id });
 });
 
 router.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const normalizedEmail = typeof email === 'string' ? email.toLowerCase().trim() : '';
+  const user = await User.findOne({ email: normalizedEmail });
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
