@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
-    "start": "npm --prefix backend run start & npm --prefix frontend run preview"
+    "build": "cd frontend && npm install && npm run build",
+    "vercel-build": "cd frontend && npm install && npm run build"
   },
   "devDependencies": {
     "concurrently": "^8.0.1"
