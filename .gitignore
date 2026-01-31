@@ -5,6 +5,8 @@ backend/node_modules/
 .env
 .env.local
 .env.*.local
+.env.production
+*.env.production
 coverage/
 *.log
 npm-debug.log*
