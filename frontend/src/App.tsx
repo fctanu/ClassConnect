@@ -111,11 +111,24 @@ export default function App() {
         </Routes>
       </main>
 
-      {/* Rich Footer */}
-      <footer className="border-t border-border mt-auto bg-[#0B1220] text-white py-16">
+      {/* Compact Footer */}
+      <footer className="border-t border-border mt-auto bg-[#0B1220] text-white py-8 md:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          {/* Mobile: Simple compact footer */}
+          <div className="md:hidden text-center space-y-4">
+            <div className="flex items-center justify-center gap-2">
+              <div className="bg-primary p-1.5 rounded-lg">
+                <GraduationCap className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <span className="font-heading font-bold text-lg tracking-tight text-white">ClassConnect</span>
+            </div>
+            <p className="text-white/60 text-xs">
+              © {new Date().getFullYear()} ClassConnect. All rights reserved.
+            </p>
+          </div>
 
+          {/* Desktop: Full footer */}
+          <div className="hidden md:grid grid-cols-4 gap-12">
             {/* Brand Column */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
@@ -125,28 +138,25 @@ export default function App() {
                 <span className="font-heading font-bold text-xl tracking-tight text-white">ClassConnect</span>
               </div>
               <p className="text-white/80 text-sm leading-relaxed max-w-xs">
-                Empowering students to connect, collaborate, and succeed. The ultimate academic community platform.
+                Empowering students to connect, collaborate, and succeed.
               </p>
             </div>
 
-            {/* Product Column */}
+            {/* Platform Column */}
             <div className="space-y-4">
               <h4 className="font-bold text-white tracking-wide">Platform</h4>
               <ul className="space-y-2 text-sm text-white/80">
                 <li><a href="#" className="hover:text-primary transition-colors">Study Groups</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Resource Sharing</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Mentorship</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Events</a></li>
               </ul>
             </div>
 
-            {/* Company Column */}
+            {/* Community Column */}
             <div className="space-y-4">
               <h4 className="font-bold text-white tracking-wide">Community</h4>
               <ul className="space-y-2 text-sm text-white/80">
                 <li><a href="#" className="hover:text-primary transition-colors">Guidelines</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Student Ambassadors</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Blog</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
               </ul>
             </div>
@@ -157,19 +167,16 @@ export default function App() {
               <ul className="space-y-2 text-sm text-white/80">
                 <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
                 <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Academic Integrity</a></li>
               </ul>
             </div>
-
           </div>
 
-          <div className="border-t border-white/10 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-white/60 font-medium">
+          {/* Desktop copyright */}
+          <div className="hidden md:flex border-t border-white/10 mt-12 pt-8 justify-between items-center">
+            <p className="text-sm text-white/60">
               © {new Date().getFullYear()} ClassConnect. All rights reserved.
             </p>
-            <div className="flex items-center gap-6 text-sm text-white/60">
-              <span>Built for Students, by Students</span>
-            </div>
+            <span className="text-sm text-white/60">Built for Students</span>
           </div>
         </div>
       </footer>

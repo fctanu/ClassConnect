@@ -148,28 +148,28 @@ export default function PostDetails() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto px-4 py-8 animate-in">
-            <Link to="/" className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors mb-8 group">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-8 animate-in">
+            <Link to="/" className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors mb-4 sm:mb-8 group text-sm sm:text-base">
                 <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                 Back to Feed
             </Link>
 
-            <div className="bg-card rounded-2xl shadow-sm p-6 md:p-10 border border-border">
+            <div className="bg-card rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 md:p-10 border border-border">
                 <article className="space-y-8">
                     {/* Header */}
                     <div className="space-y-4">
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1.5 bg-secondary/50 px-3 py-1 rounded-full">
-                                <Calendar className="w-3.5 h-3.5" />
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1.5 bg-secondary/50 px-2 sm:px-3 py-1 rounded-full">
+                                <Calendar className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
                                 {formatJakarta(post.createdAt)}
                             </span>
                             <span className="flex items-center gap-1.5">
-                                <User className="w-3.5 h-3.5" />
+                                <User className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
                                 {post.authorName || 'Anonymous'}
                             </span>
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl font-bold font-heading text-foreground leading-tight tracking-tight">
+                        <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold font-heading text-foreground leading-tight tracking-tight">
                             {post.title}
                         </h1>
                     </div>
@@ -197,28 +197,28 @@ export default function PostDetails() {
                     <hr className="border-border" />
 
                     {/* Actions */}
-                    <div className="flex items-center justify-between py-4">
-                        <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 py-4">
+                        <div className="flex items-center gap-2 sm:gap-4">
                             <Button
                                 onClick={handleLike}
                                 variant={post.likedByMe ? 'danger' : 'secondary'}
-                                size="lg"
-                                className={`gap-3 rounded-full transition-all duration-300 ${post.likedByMe ? 'shadow-lg shadow-red-500/25' : ''}`}
+                                size="sm"
+                                className={`gap-2 sm:gap-3 rounded-full transition-all duration-300 flex-1 sm:flex-none justify-center ${post.likedByMe ? 'shadow-lg shadow-red-500/25' : ''}`}
                             >
-                                <Heart className={`w-6 h-6 ${post.likedByMe ? 'fill-current animate-like' : ''}`} />
-                                <span className="font-semibold">{post.likeCount} Likes</span>
+                                <Heart className={`w-4 sm:w-6 h-4 sm:h-6 ${post.likedByMe ? 'fill-current animate-like' : ''}`} />
+                                <span className="font-semibold text-sm sm:text-base">{post.likeCount}</span>
                             </Button>
 
-                            <Button variant="ghost" size="lg" className="gap-2 rounded-full text-muted-foreground">
-                                <MessageCircle className="w-5 h-5" />
-                                Comment
+                            <Button variant="ghost" size="sm" className="gap-2 rounded-full text-muted-foreground flex-1 sm:flex-none justify-center">
+                                <MessageCircle className="w-4 sm:w-5 h-4 sm:h-5" />
+                                <span className="hidden sm:inline">Comment</span>
+                            </Button>
+
+                            <Button variant="ghost" size="sm" className="rounded-full text-muted-foreground hover:text-foreground flex-1 sm:flex-none justify-center">
+                                <Share2 className="w-4 sm:w-5 h-4 sm:h-5" />
+                                <span className="hidden sm:inline ml-2">Share</span>
                             </Button>
                         </div>
-
-                        <Button variant="ghost" size="lg" className="rounded-full text-muted-foreground hover:text-foreground">
-                            <Share2 className="w-5 h-5 mr-2" />
-                            Share
-                        </Button>
                     </div>
                 </article>
             </div>
