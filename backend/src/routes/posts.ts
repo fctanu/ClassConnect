@@ -12,9 +12,19 @@ import Comment from '../models/Comment';
 import { postCreationLimiter, commentLimiter, likeLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
-const uploadRoot = path.resolve(process.cwd(), 'uploads');
-if (!fs.existsSync(uploadRoot)) {
-  fs.mkdirSync(uploadRoot, { recursive: true });
+
+// Use /tmp for uploads in production (Vercel has read-only filesystem except /tmp)
+const uploadRoot = process.env.NODE_ENV === 'production'
+  ? '/tmp/uploads'
+  : path.resolve(process.cwd(), 'uploads');
+
+// Only try to create directory in non-production or if /tmp is available
+try {
+  if (!fs.existsSync(uploadRoot)) {
+    fs.mkdirSync(uploadRoot, { recursive: true });
+  }
+} catch (err) {
+  console.warn('Could not create uploads directory:', uploadRoot);
 }
 
 const storage = multer.diskStorage({
