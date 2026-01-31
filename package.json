@@ -8,8 +8,8 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
-    "build": "cd frontend && npm install && npm run build",
-    "vercel-build": "cd frontend && npm install && npm run build"
+    "build": "npm run build -w frontend",
+    "vercel-build": "npm run build -w frontend"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
