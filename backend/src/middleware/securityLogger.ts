@@ -2,29 +2,31 @@ import winston from 'winston';
 import { Request, Response, NextFunction } from 'express';
 import path from 'path';
 
-// ensure logs directory exists
-const fs = require('fs');
-const logDir = path.join(process.cwd(), 'logs');
-if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir);
-}
-
 const logger = winston.createLogger({
     level: 'info',
     format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json()
     ),
-    transports: [
-        new winston.transports.File({ filename: path.join(logDir, 'security.log') }),
-        new winston.transports.File({ filename: path.join(logDir, 'error.log'), level: 'error' }),
-    ],
+    transports: [],
 });
 
 if (process.env.NODE_ENV !== 'production') {
+    // ensure logs directory exists
+    const fs = require('fs');
+    const logDir = path.join(process.cwd(), 'logs');
+    if (!fs.existsSync(logDir)) {
+        fs.mkdirSync(logDir);
+    }
+
+    logger.add(new winston.transports.File({ filename: path.join(logDir, 'security.log') }));
+    logger.add(new winston.transports.File({ filename: path.join(logDir, 'error.log'), level: 'error' }));
     logger.add(new winston.transports.Console({
         format: winston.format.simple(),
     }));
+} else {
+    // In production (Vercel), log only to console
+    logger.add(new winston.transports.Console());
 }
 
 export function logSecurityEvent(event: string, details: any, req?: Request) {
