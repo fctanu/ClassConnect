@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import path from 'path';
 import mongoSanitize from 'express-mongo-sanitize';
-import xss from 'xss-clean';
+import { xssMiddleware } from './middleware/xss';
 import hpp from 'hpp';
 import { httpsRedirect } from './middleware/httpsRedirect';
 import { securityLogger } from './middleware/securityLogger';
@@ -69,7 +69,7 @@ app.use(mongoSanitize({
 }));
 
 // XSS Protection
-app.use(xss());
+app.use(xssMiddleware);
 
 // HTTP Parameter Pollution Protection
 app.use(hpp());
