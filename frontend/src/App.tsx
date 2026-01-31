@@ -64,12 +64,12 @@ export default function App() {
                 </Link>
               </nav>
 
-              <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+              <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 rounded-full bg-white/5 border border-white/10">
                 <div className={`w-2 h-2 rounded-full ${apiStatus === 'online' ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.5)]' :
                   apiStatus === 'offline' ? 'bg-red-400' : 'bg-yellow-400 animate-pulse'
                   }`} />
-                <span className="text-xs font-medium text-white/70">
-                  {apiStatus === 'online' ? 'System Online' : apiStatus === 'offline' ? 'System Offline' : 'Connecting...'}
+                <span className="text-[10px] sm:text-xs font-medium text-white/70">
+                  {apiStatus === 'online' ? 'Online' : apiStatus === 'offline' ? 'Offline' : 'Loading...'}
                 </span>
               </div>
             </div>
