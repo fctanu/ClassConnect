@@ -116,7 +116,7 @@ router.get(
 router.post(
   '/',
   postCreationLimiter,
-  upload.array('images', 6),
+  upload.array('images', 6) as any,
   body('title').trim().isLength({ min: 1, max: 120 }).withMessage('title is required'),
   body('description').optional().trim().isLength({ max: 2000 }).withMessage('description too long'),
   body('images').optional().isArray({ max: 6 }).withMessage('images must be an array'),
